@@ -5,13 +5,12 @@ This repository contains a simple web-based countdown timer designed to be embed
 
 ## Project Structure
 
-- `index.html` – the main page for the timer
-- `css/style.css` – styling with dark theme
-- `js/script.js` – countdown logic in vanilla JavaScript
+- `index.html` – the self‑contained timer page (CSS and JS are inlined for easier embedding)
+<!-- The separate `css` and `js` folders exist but are no longer required. -->
 
 ## Building & Running
 
-No build step is required; the timer is a static web page. You can run it locally by opening `index.html` in your browser or by serving the directory with a simple static server (e.g. `npx serve .` or `python -m http.server`).
+No build step is required; the timer is a static web page. You can run it locally by opening `index.html` in your browser (it includes its own styling and script) or by serving the directory with a simple static server (e.g. `npx serve .` or `python -m http.server`).
 
 ### Embedding in Notion
 
