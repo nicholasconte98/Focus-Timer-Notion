@@ -27,6 +27,9 @@ function startTimer() {
             return;
         }
         displayTime(seconds);
+        if (seconds === 0) {
+            alert('Time\'s up! Your focus session is complete.');
+        }
     }, 1000);
 }
 
