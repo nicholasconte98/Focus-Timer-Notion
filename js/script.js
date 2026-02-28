@@ -1,4 +1,5 @@
 let countdown;
+let audioContext = null;
 const timerDisplay = document.getElementById('timer');
 const startBtn = document.getElementById('startBtn');
 const resetBtn = document.getElementById('resetBtn');
@@ -16,25 +17,35 @@ function displayTime(seconds) {
 }
 
 function playBeep() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.value = 800;
-    oscillator.type = 'sine';
-    
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-    
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.5);
+    try {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (e) {
+        console.log('Audio not available in this context');
+    }
 }
 
 function showAlert() {
+    const alertOverlay = document.getElementById('alertOverlay');
     alertElement.classList.add('show');
+    if (alertOverlay) {
+        alertOverlay.classList.add('show');
+    }
     
     // Play 5 beeps
     for (let i = 0; i < 5; i++) {
@@ -46,6 +57,9 @@ function showAlert() {
     // Hide alert after 5 seconds
     setTimeout(() => {
         alertElement.classList.remove('show');
+        if (alertOverlay) {
+            alertOverlay.classList.remove('show');
+        }
     }, 5000);
 }
 
@@ -72,6 +86,10 @@ function resetTimer() {
     clearInterval(countdown);
     displayTime(0);
     alertElement.classList.remove('show');
+    const alertOverlay = document.getElementById('alertOverlay');
+    if (alertOverlay) {
+        alertOverlay.classList.remove('show');
+    }
 }
 
 startBtn.addEventListener('click', startTimer);
