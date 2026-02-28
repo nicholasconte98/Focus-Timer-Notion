@@ -2,7 +2,9 @@ let countdown;
 const timerDisplay = document.getElementById('timer');
 const startBtn = document.getElementById('startBtn');
 const resetBtn = document.getElementById('resetBtn');
+const hoursInput = document.getElementById('hours');
 const minutesInput = document.getElementById('minutes');
+const secondsInput = document.getElementById('seconds');
 
 function displayTime(seconds) {
     const hrs = Math.floor(seconds / 3600);
@@ -15,10 +17,13 @@ function displayTime(seconds) {
 }
 
 function startTimer() {
-    const mins = parseInt(minutesInput.value, 10);
-    if (isNaN(mins) || mins < 0) return;
+    const hrs = parseInt(hoursInput.value, 10) || 0;
+    const mins = parseInt(minutesInput.value, 10) || 0;
+    const secs = parseInt(secondsInput.value, 10) || 0;
+    if (hrs < 0 || mins < 0 || secs < 0) return;
     clearInterval(countdown);
-    let seconds = mins * 60;
+    let seconds = hrs * 3600 + mins * 60 + secs;
+    if (seconds === 0) return;
     displayTime(seconds);
     countdown = setInterval(() => {
         seconds--;
