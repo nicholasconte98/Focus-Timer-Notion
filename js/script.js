@@ -11,9 +11,7 @@ function displayTime(seconds) {
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
     timerDisplay.textContent =
-        `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs
-            .toString()
-            .padStart(2, '0')}`;
+        `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
 function startTimer() {
@@ -27,12 +25,9 @@ function startTimer() {
     displayTime(seconds);
     countdown = setInterval(() => {
         seconds--;
-        if (seconds < 0) {
-            clearInterval(countdown);
-            return;
-        }
         displayTime(seconds);
         if (seconds === 0) {
+            clearInterval(countdown);
             alert('Time\'s up! Your focus session is complete.');
         }
     }, 1000);
