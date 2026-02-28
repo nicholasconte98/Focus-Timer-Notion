@@ -1,5 +1,4 @@
 let countdown;
-let audioContext = null;
 const timerDisplay = document.getElementById('timer');
 const startBtn = document.getElementById('startBtn');
 const resetBtn = document.getElementById('resetBtn');
@@ -16,6 +15,7 @@ function displayTime(seconds) {
         `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
+let audioContext = null;
 function playBeep() {
     try {
         if (!audioContext) {
@@ -36,16 +36,13 @@ function playBeep() {
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.5);
     } catch (e) {
-        console.log('Audio not available in this context');
+        console.log('Audio not available');
     }
 }
 
 function showAlert() {
-    const alertOverlay = document.getElementById('alertOverlay');
     alertElement.classList.add('show');
-    if (alertOverlay) {
-        alertOverlay.classList.add('show');
-    }
+    timerDisplay.classList.add('alert-active');
     
     // Play 5 beeps
     for (let i = 0; i < 5; i++) {
@@ -57,9 +54,7 @@ function showAlert() {
     // Hide alert after 5 seconds
     setTimeout(() => {
         alertElement.classList.remove('show');
-        if (alertOverlay) {
-            alertOverlay.classList.remove('show');
-        }
+        timerDisplay.classList.remove('alert-active');
     }, 5000);
 }
 
@@ -86,10 +81,7 @@ function resetTimer() {
     clearInterval(countdown);
     displayTime(0);
     alertElement.classList.remove('show');
-    const alertOverlay = document.getElementById('alertOverlay');
-    if (alertOverlay) {
-        alertOverlay.classList.remove('show');
-    }
+    timerDisplay.classList.remove('alert-active');
 }
 
 startBtn.addEventListener('click', startTimer);

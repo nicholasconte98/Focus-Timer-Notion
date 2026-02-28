@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Focus Timer</title>
     <style>
-        /* dark background with white and grey accents */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -15,7 +14,7 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            position: relative;
+            padding: 1rem;
         }
         .container {
             text-align: center;
@@ -23,11 +22,20 @@
             padding: 2rem;
             border-radius: 8px;
             background-color: #111;
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
         }
         .timer {
             font-size: 4rem;
             margin: 1rem 0;
             color: #eee;
+            transition: all 0.2s ease;
+        }
+        .timer.alert-active {
+            color: #ff0000;
+            font-weight: bold;
+            animation: blink 0.5s infinite;
         }
         .controls {
             display: flex;
@@ -54,58 +62,39 @@
         .controls button:hover {
             background-color: #666;
         }
-        #alertOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(255, 0, 0, 0.7);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            animation: pulse 0.6s infinite;
-        }
-        #alertOverlay.show {
-            display: flex !important;
-        }
         #alert {
             display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(255, 0, 0, 0.9);
-            padding: 2rem;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #ff3333;
             border-radius: 8px;
-            z-index: 10001;
-            text-align: center;
             animation: pulse 0.6s infinite;
-            min-width: 300px;
         }
         #alert.show {
             display: block;
         }
         #alertText {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            margin: 0.5rem 0;
         }
         #alertMessage {
-            font-size: 1.5rem;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
         }
         @keyframes pulse {
             0%, 100% {
                 opacity: 1;
             }
             50% {
-                opacity: 0.5;
+                opacity: 0.6;
+            }
+        }
+        @keyframes blink {
+            0%, 49% {
+                color: #ff0000;
+            }
+            50%, 100% {
+                color: #ffcccc;
             }
         }
     </style>
@@ -126,7 +115,7 @@
             <div id="alertMessage">Time's up! Your focus session is complete.</div>
         </div>
     </div>
-    <div id="alertOverlay"></div>
+
     <script>
         let countdown;
         const timerDisplay = document.getElementById('timer');
@@ -166,14 +155,13 @@
                 oscillator.start(audioContext.currentTime);
                 oscillator.stop(audioContext.currentTime + 0.5);
             } catch (e) {
-                console.log('Audio not available in this context');
+                console.log('Audio not available');
             }
         }
 
         function showAlert() {
-            const alertOverlay = document.getElementById('alertOverlay');
             alertElement.classList.add('show');
-            alertOverlay.classList.add('show');
+            timerDisplay.classList.add('alert-active');
             
             // Play 5 beeps
             for (let i = 0; i < 5; i++) {
@@ -185,7 +173,7 @@
             // Hide alert after 5 seconds
             setTimeout(() => {
                 alertElement.classList.remove('show');
-                alertOverlay.classList.remove('show');
+                timerDisplay.classList.remove('alert-active');
             }, 5000);
         }
 
@@ -212,7 +200,7 @@
             clearInterval(countdown);
             displayTime(0);
             alertElement.classList.remove('show');
-            document.getElementById('alertOverlay').classList.remove('show');
+            timerDisplay.classList.remove('alert-active');
         }
 
         startBtn.addEventListener('click', startTimer);
