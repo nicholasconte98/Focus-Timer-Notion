@@ -5,6 +5,7 @@ const resetBtn = document.getElementById('resetBtn');
 const hoursInput = document.getElementById('hours');
 const minutesInput = document.getElementById('minutes');
 const secondsInput = document.getElementById('seconds');
+const alertElement = document.getElementById('alert');
 
 function displayTime(seconds) {
     const hrs = Math.floor(seconds / 3600);
@@ -12,6 +13,40 @@ function displayTime(seconds) {
     const secs = seconds % 60;
     timerDisplay.textContent =
         `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+function playBeep() {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.value = 800;
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+}
+
+function showAlert() {
+    alertElement.classList.add('show');
+    
+    // Play 5 beeps
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            playBeep();
+        }, i * 600);
+    }
+    
+    // Hide alert after 5 seconds
+    setTimeout(() => {
+        alertElement.classList.remove('show');
+    }, 5000);
 }
 
 function startTimer() {
@@ -28,7 +63,7 @@ function startTimer() {
         displayTime(seconds);
         if (seconds === 0) {
             clearInterval(countdown);
-            alert('Time\'s up! Your focus session is complete.');
+            showAlert();
         }
     }, 1000);
 }
@@ -36,6 +71,7 @@ function startTimer() {
 function resetTimer() {
     clearInterval(countdown);
     displayTime(0);
+    alertElement.classList.remove('show');
 }
 
 startBtn.addEventListener('click', startTimer);
